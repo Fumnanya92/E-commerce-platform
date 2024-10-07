@@ -1,0 +1,51 @@
+name: React App CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set up Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x' # Adjust to the desired Node.js version
+          cache: 'npm'
+
+      # Navigate to webapp directory
+      - name: Navigate to webapp directory
+        run: cd webapp
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+        working-directory: webapp
+
+      # Build the React app
+      - name: Build React App
+        run: npm run build
+        working-directory: webapp
+
+      # Run tests (if any)
+      #- name: Run Tests
+       # run: npm test
+        #working-directory: webapp
+
+      # Optional: Deploy the app (adjust based on your deployment method)
+      # Here is an example for deploying to a service like Vercel, Netlify, or similar
+      - name: Deploy
+        run: |
+          echo "Deploying the application..."
+          # Add your deployment command here
