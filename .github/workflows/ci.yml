@@ -28,25 +28,21 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      # Change directory to the 'api' folder where your app.js is located
-      - name: Change to API directory
-        run: cd api
-
-      # Install dependencies
+      # Install dependencies in the 'api' folder
       - name: Install dependencies
-        run: npm install
+        run: npm install --prefix api
 
       # Run linter (ESLint)
       #- name: Run linter
-      #  run: npm run lint
+      #  run: npm run lint --prefix api
 
       # Run tests (Jest, if set up)
       #- name: Run tests
-      #  run: npm test
+      #  run: npm test --prefix api
 
-      # Start the server to ensure it starts without issues
+      # Start the server to ensure it starts without issues, directly referencing the 'api' folder
       - name: Start the server
-        run: npm start &
+        run: node api/app.js &
         env:
           PORT: 3002
 
