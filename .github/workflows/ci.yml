@@ -1,0 +1,53 @@
+name: Node.js CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x] # You can add more versions if needed
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set up Node.js environment
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Run linter (ESLint)
+      #- name: Run linter
+      #  run: npm run lint
+
+      # Run tests (Jest, if set up)
+      - name: Run tests
+        run: npm test
+
+      # Start the server to ensure it starts without issues
+      - name: Start the server
+        run: npm start &
+        env:
+          PORT: 3002
+
+      # Health check (optional, ensure the app is accessible)
+      #- name: Check if server is running
+      #  run: |
+      #    sleep 5
+      #    curl -v --fail http://localhost:3000 || exit 1
