@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x, 24.x] # You can add more versions if needed
+        node-version: [20.x, 22.x] # You can add more versions if needed
 
     steps:
       # Checkout the repository
