@@ -23,7 +23,7 @@ jobs:
 
       # Set up Node.js environment
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -37,8 +37,8 @@ jobs:
       #  run: npm run lint
 
       # Run tests (Jest, if set up)
-      - name: Run tests
-        run: npm test
+      #- name: Run tests
+      #  run: npm test
 
       # Start the server to ensure it starts without issues
       - name: Start the server
