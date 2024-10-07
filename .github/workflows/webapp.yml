@@ -37,6 +37,17 @@ jobs:
       - name: Build React App
         run: npm run build
         working-directory: webapp
+      
+        # Build Docker image for the frontend
+      - name: Build Frontend Docker Image
+        run: |
+          cd webapp
+          docker build -t e-commerce-frontend .
+
+      # Run Docker container for the frontend
+      - name: Run Frontend Docker Container
+        run: |
+          docker run -d -p 80:80 e-commerce-frontend
 
       # Run tests (if any)
       #- name: Run Tests
