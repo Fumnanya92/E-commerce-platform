@@ -31,6 +31,17 @@ jobs:
       # Install dependencies in the 'api' folder
       - name: Install dependencies
         run: npm install --prefix api
+      
+       # Build Docker image
+      - name: Build Docker Image
+       run: |
+         cd api
+         docker build -t e-commerce-api .
+
+     # Start Docker container
+      - name: Start Docker Container
+       run: |
+         docker run -d -p 3002:3002 e-commerce-api
 
       # Run linter (ESLint)
       #- name: Run linter
