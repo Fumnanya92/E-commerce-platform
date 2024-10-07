@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x, 22.x] # You can add more versions if needed
+        node-version: [20.x, 22.x]  # You can add more versions if needed
 
     steps:
       # Checkout the repository
@@ -28,13 +28,17 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
+      # Change directory to the 'api' folder where your app.js is located
+      - name: Change to API directory
+        run: cd api
+
       # Install dependencies
       - name: Install dependencies
         run: npm install
 
       # Run linter (ESLint)
       #- name: Run linter
-       # run: npm run lint
+      #  run: npm run lint
 
       # Run tests (Jest, if set up)
       #- name: Run tests
@@ -50,4 +54,4 @@ jobs:
       #- name: Check if server is running
       #  run: |
       #    sleep 5
-      #    curl -v --fail http://localhost:3000 || exit 1
+      #    curl -v --fail http://localhost:3002 || exit 1
