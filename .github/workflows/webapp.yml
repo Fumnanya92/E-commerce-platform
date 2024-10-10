@@ -24,22 +24,18 @@ jobs:
           node-version: '20.x' # Adjust to the desired Node.js version
           cache: 'npm'
 
-       # Set up AWS credentials
+      # Set up AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2  # Updated to v2
         with:
-         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-         aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-        # Login to AWS ECR
+      # Login to AWS ECR (for frontend)
       - name: Login to Amazon ECR
         run: |
-         aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI_API }}     
-
-      # Navigate to webapp directory
-      - name: Navigate to webapp directory
-        run: cd webapp
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI_FRONTEND }}
 
       # Install dependencies
       - name: Install dependencies
@@ -50,12 +46,17 @@ jobs:
       - name: Build React App
         run: npm run build
         working-directory: webapp
-      
-        # Build Docker image for the frontend
+
+      # Build Docker image for the frontend
       - name: Build Frontend Docker Image
+        run: docker build -t e-commerce-frontend .
+        working-directory: webapp
+
+      # Tag and Push Docker Image to ECR (Frontend)
+      - name: Tag and Push Docker Image
         run: |
-          cd webapp
-          docker build -t e-commerce-frontend .
+          docker tag e-commerce-frontend:latest ${{ secrets.ECR_REPOSITORY_URI_FRONTEND }}:latest
+          docker push ${{ secrets.ECR_REPOSITORY_URI_FRONTEND }}:latest
 
       # Run Docker container for the frontend
       - name: Run Frontend Docker Container
@@ -64,11 +65,10 @@ jobs:
 
       # Run tests (if any)
       #- name: Run Tests
-       # run: npm test
-        #working-directory: webapp
+      #  run: npm test
+      #  working-directory: webapp
 
       # Optional: Deploy the app (adjust based on your deployment method)
-      # Here is an example for deploying to a service like Vercel, Netlify, or similar
       - name: Deploy
         run: |
           echo "Deploying the application..."
