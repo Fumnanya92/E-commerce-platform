@@ -28,28 +28,39 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
+      # Set up AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2  # Updated to v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # Login to AWS ECR
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
+
       # Install dependencies in the 'api' folder
       - name: Install dependencies
         run: npm install --prefix api
       
-       # Build Docker image
+      # Build Docker image
       - name: Build Docker Image
         run: |
-         cd api
-         docker build -t e-commerce-api .
+          cd api
+          docker build -t e-commerce-api .
 
-     # Start Docker container
+      # Tag and push the Docker image to AWS ECR
+      - name: Tag and Push Docker Image
+        run: |
+          docker tag e-commerce-api:latest ${{ secrets.ECR_REPOSITORY_URI }}:latest
+          docker push ${{ secrets.ECR_REPOSITORY_URI }}:latest
+
+      # Start Docker container
       - name: Start Docker Container
         run: |
-         docker run -d -p 3002:3002 e-commerce-api
-
-      # Run linter (ESLint)
-      #- name: Run linter
-      #  run: npm run lint --prefix api
-
-      # Run tests (Jest, if set up)
-      #- name: Run tests
-      #  run: npm test --prefix api
+          docker run -d -p 3002:3002 e-commerce-api
 
       # Start the server to ensure it starts without issues, directly referencing the 'api' folder
       - name: Start the server
